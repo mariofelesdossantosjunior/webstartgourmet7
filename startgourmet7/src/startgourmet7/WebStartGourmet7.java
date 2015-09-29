@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static startgourmet7.ManipulaZip.unZip;
 
 /**
@@ -64,8 +66,10 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
             shell.executeCommand("/opt/jdk1.8/bin/java -jar " + gourmet7.getPath() + "/xml.jar ");
             System.exit(0);
         } catch (IOException ex) {
+            restoreBd();
             ex.printStackTrace();
         } catch (SQLException ex) {
+            restoreBd();
             ex.printStackTrace();
         }
     }
@@ -120,6 +124,7 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
 
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -137,6 +142,13 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setText("Restore BD ");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,7 +157,8 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -155,7 +168,9 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton3)
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -171,6 +186,11 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
         // TODO add your handling code here:
         updateSysBd();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        restoreBd();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -210,5 +230,17 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     // End of variables declaration//GEN-END:variables
+
+    private void restoreBd() {
+        try {
+            LocalShell shell = new LocalShell();
+            //Restaura o bd passa o caminho do arquivo .sql
+            shell.executeCommand("psql gourmet7 -h 192.168.0.187 -U postgres < /home/mario/backup/backup.sql");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
 }
