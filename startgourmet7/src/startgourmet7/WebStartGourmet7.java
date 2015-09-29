@@ -42,7 +42,8 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
 
             //Executa backup banco
             shell.executeCommand("pg_dump gourmet7 -h 192.168.0.187 -U postgres > /home/mario/backup/backup.sql");
-            shell.executeCommand("pkg1522pam");
+            //Senha BD
+            shell.executeCommand("xxxxx");
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -61,7 +62,8 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
             String pastaENameArq = gourmet7.getPath() + "/res.zip";
             fazDownload(caminho, pastaENameArq);
             unZip(new File(gourmet7.getPath() + "/res.zip"));
-            Database.create("gourmet7", "postgres", "pkg1522pam");
+            //Nome BD , Usuario , Senha BD
+            Database.create("gourmet7", "postgres", "xxxxx");
             //Executa o jar 
             shell.executeCommand("/opt/jdk1.8/bin/java -jar " + gourmet7.getPath() + "/xml.jar ");
             System.exit(0);
