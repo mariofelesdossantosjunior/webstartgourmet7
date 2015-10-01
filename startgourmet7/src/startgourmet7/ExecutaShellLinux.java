@@ -9,9 +9,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-public class LocalShell {
+public class ExecutaShellLinux {
 
-    private static final Logger log = Logger.getLogger(LocalShell.class.getName());
+    private static final Logger log = Logger.getLogger(ExecutaShellLinux.class.getName());
 
     public void executeCommand(final String command) throws IOException {
 
@@ -52,7 +52,7 @@ public class LocalShell {
     }
 
     public static void main(String[] args) throws IOException {
-        final LocalShell shell = new LocalShell();
+        final ExecutaShellLinux shell = new ExecutaShellLinux();
         shell.executeCommand("ls ~");
     }
 }

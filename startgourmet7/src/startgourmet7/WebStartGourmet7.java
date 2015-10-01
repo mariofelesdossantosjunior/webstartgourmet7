@@ -5,14 +5,13 @@
  */
 package startgourmet7;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static startgourmet7.ManipulaZip.unZip;
 
 /**
@@ -20,6 +19,10 @@ import static startgourmet7.ManipulaZip.unZip;
  * @author mario
  */
 public class WebStartGourmet7 extends javax.swing.JFrame {
+
+    static final Runtime run = Runtime.getRuntime();
+    static Process pro;
+    static BufferedReader read;
 
     /**
      * Creates new form WebStartGourmet7
@@ -30,7 +33,7 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
 
     private void fazBackupSysBd() {
         try {
-            LocalShell shell = new LocalShell();
+            ExecutaShellLinux shell = new ExecutaShellLinux();
             //Cria a Pasta de Backup
             File backup = new File(System.getProperty("user.home") + "/backup/");
             backup.mkdir();
@@ -43,7 +46,7 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
             //Executa backup banco
             shell.executeCommand("pg_dump gourmet7 -h 192.168.0.187 -U postgres > /home/mario/backup/backup.sql");
             //Senha BD
-            shell.executeCommand("xxxxx");
+            shell.executeCommand("XXXXXXX");
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -52,7 +55,9 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
 
     private void updateSysBd() {
         try {
-            LocalShell shell = new LocalShell();
+            ExecutaShellLinux shell = new ExecutaShellLinux();
+            ExecutaCmdWindows cw = new ExecutaCmdWindows();
+
             //Cria pasta Sistema
             File gourmet7 = new File(System.getProperty("user.home") + "/gourmet7/");
             gourmet7.mkdir();
@@ -62,18 +67,35 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
             String pastaENameArq = gourmet7.getPath() + "/res.zip";
             fazDownload(caminho, pastaENameArq);
             unZip(new File(gourmet7.getPath() + "/res.zip"));
-            //Nome BD , Usuario , Senha BD
-            Database.create("gourmet7", "postgres", "xxxxx");
-            //Executa o jar 
-            shell.executeCommand("/opt/jdk1.8/bin/java -jar " + gourmet7.getPath() + "/xml.jar ");
+
+            //Nome BD , Usuario , Senha BD (Executa script)
+            Database.create("gourmet7", "postgres", "XXXXXX");
+
+            //Verifico qual sistema operacional
+            if (System.getProperty("os.name").contains("Windows")) {
+                System.out.println("WINDOWS VIRUS PORRA");
+                //Executa Comando no Windows
+                //Executa o .bat que ira executar o .jar
+                cw.execCommand(gourmet7.getPath() + "\\executajar.bat");
+            } else {
+                System.out.println("LINUX VIDA");
+                //Dar uma olhada melhor aqui
+                System.getProperty("java.home");
+                shell.executeCommand("/opt/jdk1.8/bin/java -jar " + gourmet7.getPath() + "/xml.jar ");
+            }
+
+            //Fecha atualizador
             System.exit(0);
-        } catch (IOException ex) {
-            restoreBd();
+        } catch (Exception ex) {
             ex.printStackTrace();
-        } catch (SQLException ex) {
-            restoreBd();
+            //restoreBd();
             ex.printStackTrace();
         }
+    }
+
+    public static void showFB() throws IOException {
+        read = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+        System.out.println(read.readLine());
     }
 
     private void fazDownload(String urlArquivo, String caminhoEName) {
@@ -237,7 +259,7 @@ public class WebStartGourmet7 extends javax.swing.JFrame {
 
     private void restoreBd() {
         try {
-            LocalShell shell = new LocalShell();
+            ExecutaShellLinux shell = new ExecutaShellLinux();
             //Restaura o bd passa o caminho do arquivo .sql
             shell.executeCommand("psql gourmet7 -h 192.168.0.187 -U postgres < /home/mario/backup/backup.sql");
         } catch (IOException ex) {
